@@ -4,6 +4,7 @@ const Weathers = require('../model/Weathers.js');
 const sequelize = require("../config/dbConnect.js");
 const puppeteer = require('puppeteer');
 const axios = require('axios');
+const { Op } = require("sequelize");
 
 
 exports.getIndex = async (req, res) => {
@@ -37,7 +38,18 @@ const controlCity = async (cityStub) => {
 
 const controlPredictedWeather = async (city) => {
     try {
-        const degree = await Predicted_Weather.findAll({ where: { CITYID: city.ID } });
+        const date = new Date();
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        const dayMonth = month + "-" + day;
+        const degree = await Predicted_Weather.findAll({ 
+            where:{
+                CITYID: city.ID,
+                    DATE: {
+                        [Op.like]:`%${dayMonth}`
+                    }
+            }
+        });
         if (degree.length === 0) {
             return (getPredictedWeather(city));
         }
