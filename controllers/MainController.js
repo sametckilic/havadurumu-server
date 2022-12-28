@@ -20,7 +20,7 @@ exports.getCity = async (req, res) => {
 }
 
 const allCities = async ()=>{
-    const cities = await City.findAll();
+    const cities = await City.findAll({order: [["ID","ASC"]]});
     return cities;
 };
 
